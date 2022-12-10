@@ -1,6 +1,6 @@
 extends Node
 
-onready var _player_name = $VBoxContainer/player_name
+onready var _player_name = $CanvasLayer/VBoxContainer/player_name
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

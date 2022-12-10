@@ -57,8 +57,6 @@ WebGameModule="*res://addons/web_game/WebGameModule.gd"
 window/size/width=600
 window/size/height=1024
 window/handheld/orientation="portrait"
-window/stretch/mode="viewport"
-window/stretch/aspect="keep_width"
 
 [gui]
 
