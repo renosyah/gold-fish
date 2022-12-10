@@ -3,7 +3,6 @@ extends Node
 onready var _coin_spawn_timer = $coin_spawn_timer
 onready var _gold_fish = $YSort/gold_fish
 onready var _y_sort = $YSort
-onready var _collision_shape_2d = $click_area/CollisionShape2D
 onready var _screen_size = get_viewport().get_visible_rect().size
 onready var _score = $CanvasLayer/ui_panel/MarginContainer3/score
 onready var _hp = $CanvasLayer/ui_panel/hp
@@ -31,7 +30,6 @@ func _ready():
 	
 	_coin_spawn_timer.wait_time = rand_range(0.5, 1.5)
 	_coin_spawn_timer.start()
-	
 	display_score()
 
 func get_random_y(_spawn_point :Control):
@@ -103,7 +101,7 @@ func display_score():
 	_score.text = "Score : " + str(score)
 	_hp.text = "Hp : " + str(hp)
 	
-func _on_click_area_input_event(viewport, event, shape_idx):
+func _on_click_area_gui_input(event):
 	if event is InputEventMouseButton and event.is_action_pressed("left_click"):
 		_gold_fish.move_to = event.position
 		_gold_fish.is_moving = true
@@ -134,3 +132,5 @@ func _on_play_again_pressed():
 	hp = 5
 	display_score()
 	
+
+

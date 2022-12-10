@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://asset/ui/bg/bg.tscn" type="PackedScene" id=1]
 [ext_resource path="res://asset/game/game.gd" type="Script" id=2]
@@ -8,9 +8,6 @@
 [ext_resource path="res://asset/ui/fonts/montserrat_eb_32.tres" type="DynamicFont" id=6]
 [ext_resource path="res://asset/gold-fish/gold_fish.tscn" type="PackedScene" id=7]
 [ext_resource path="res://asset/menu/play.png" type="Texture" id=8]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 277.5, 450.5 )
 
 [node name="game" type="Node"]
 script = ExtResource( 2 )
@@ -78,6 +75,10 @@ margin_left = 586.0
 margin_right = 600.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 14, 0 )
+
+[node name="click_area" type="Control" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 
 [node name="game_over_panel" type="VBoxContainer" parent="CanvasLayer"]
 visible = false
@@ -161,22 +162,14 @@ one_shot = true
 wait_time = 0.55
 autostart = true
 
-[node name="click_area" type="Area2D" parent="."]
-collision_mask = 0
-monitorable = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="click_area"]
-position = Vector2( 297.5, 543.5 )
-shape = SubResource( 1 )
-
 [node name="YSort" type="YSort" parent="."]
 
 [node name="gold_fish" parent="YSort" instance=ExtResource( 7 )]
 position = Vector2( 308, 468 )
 
 [connection signal="pressed" from="CanvasLayer/ui_panel/pause" to="." method="_on_pause_pressed"]
+[connection signal="gui_input" from="CanvasLayer/click_area" to="." method="_on_click_area_gui_input"]
 [connection signal="pressed" from="CanvasLayer/game_over_panel/play_again" to="." method="_on_play_again_pressed"]
 [connection signal="timeout" from="coin_spawn_timer" to="." method="_on_coin_spawn_timer_timeout"]
 [connection signal="timeout" from="pufferfish_spawn_timer" to="." method="_on_pufferfish_spawn_timer_timeout"]
-[connection signal="input_event" from="click_area" to="." method="_on_click_area_input_event"]
 [connection signal="hit" from="YSort/gold_fish" to="." method="_on_gold_fish_hit"]
