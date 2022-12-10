@@ -44,9 +44,9 @@ _global_script_class_icons={
 
 [application]
 
-config/name="gold-fish"
+config/name="Gold Fish"
 run/main_scene="res://asset/menu/menu.tscn"
-config/icon="res://icon.png"
+config/icon="res://icn.png"
 
 [autoload]
 
