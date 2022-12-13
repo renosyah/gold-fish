@@ -5,16 +5,17 @@ onready var _gold_fish = $YSort/gold_fish
 onready var _y_sort = $YSort
 onready var _screen_size = get_viewport().get_visible_rect().size
 onready var _score = $CanvasLayer/ui_panel/MarginContainer3/score
-onready var _hp = $CanvasLayer/ui_panel/hp
+onready var _ui_hp = $CanvasLayer/ui_panel/center/ui_hp
 onready var _hurt = $CanvasLayer/hurt
 
 onready var _game_over_panel = $CanvasLayer/game_over_panel
 onready var _ui_panel = $CanvasLayer/ui_panel
+onready var _click_point = $click_point
 
 var score : int = 0
-var hp :int = 5
 var is_dead :bool = false
 
+var coin_particle_pools :Array = []
 var coin_pools :Array = []
 var puffer_fish_pools :Array = []
 
@@ -22,11 +23,17 @@ var puffer_fish_pools :Array = []
 func _ready():
 	randomize()
 	
+	_ui_hp.hp = 3
+	_ui_hp.max_hp = 3
+	
+	_gold_fish.position = _screen_size / 2
+	
 	_game_over_panel.visible = false
 	_ui_panel.visible = true
 	
 	pooling_coin()
 	pooling_puffer_fish()
+	pooling_coin_particle()
 	
 	_coin_spawn_timer.wait_time = rand_range(0.5, 1.5)
 	_coin_spawn_timer.start()
@@ -57,6 +64,12 @@ func pooling_coin():
 		_y_sort.add_child(coin)
 		coin_pools.append(coin)
 		
+func pooling_coin_particle():
+	for i in range(20):
+		var coin = preload("res://asset/coin/coin_particle.tscn").instance()
+		coin.position = Vector2(-100, -100)
+		_y_sort.add_child(coin)
+		coin_particle_pools.append(coin)
 		
 func pooling_puffer_fish():
 	for i in range(5):
@@ -97,14 +110,22 @@ func on_coin_pickup(coin):
 	score += 1
 	display_score()
 	
+	for coin_particle_pool in coin_particle_pools:
+		if not coin_particle_pool.is_emitting():
+			coin_particle_pool.position = coin.position
+			coin_particle_pool.display()
+			return
+			
 func display_score():
 	_score.text = "Score : " + str(score)
-	_hp.text = "Hp : " + str(hp)
+	_ui_hp.display()
 	
 func _on_click_area_gui_input(event):
 	if event is InputEventMouseButton and event.is_action_pressed("left_click"):
 		_gold_fish.move_to = event.position
 		_gold_fish.is_moving = true
+		_click_point.position = event.position
+		_click_point.click()
 		
 func _on_pause_pressed():
 	get_tree().change_scene("res://asset/menu/menu.tscn")
@@ -113,12 +134,14 @@ func _on_gold_fish_hit(fish):
 	if is_dead:
 		return
 		
-	hp -= 1
+	_ui_hp.hp -= 1
 	_hurt.show_hurt()
 	
-	if hp < 1:
+	if _ui_hp.hp < 1:
 		WebGameModule.update_scoreboard(score)
 		is_dead = true
+		_gold_fish.visible = false
+		_gold_fish.position = Vector2(-500, -500)
 		_game_over_panel.visible = true
 		_ui_panel.visible = false
 		
@@ -126,10 +149,12 @@ func _on_gold_fish_hit(fish):
 	
 func _on_play_again_pressed():
 	is_dead = false
+	_gold_fish.visible = true
+	_gold_fish.position = _screen_size / 2
 	_game_over_panel.visible = false
 	_ui_panel.visible = true
 	score = 0
-	hp = 5
+	_ui_hp.reset()
 	display_score()
 	
 

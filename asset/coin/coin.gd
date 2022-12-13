@@ -4,6 +4,7 @@ class_name Coin
 onready var collision_shape_2d = $CollisionShape2D
 onready var timer = $Timer
 onready var audio_stream_player = $AudioStreamPlayer
+onready var sprite = $Sprite
 
 signal on_pickup(coin)
 
@@ -19,12 +20,14 @@ func pick():
 	if not visible:
 		return
 		
+	emit_signal("on_pickup", self)
+	
 	position = Vector2(-100, -100)
 	visible = false
 	audio_stream_player.play()
 	
 	timer.stop()
-	emit_signal("on_pickup", self)
+
 	
 func _on_Timer_timeout():
 	position = Vector2(-100, -100)
